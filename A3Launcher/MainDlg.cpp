@@ -211,8 +211,8 @@ int CMainDlg::AppAdd()
 		if (pgAdvanced.m_bWindowMode)
 		{
 			cfg->m_wndMode = CAppConfig::WindowMode::WndModeWindowed;
-			cfg->m_nWindowWidth = 1280;	// TODO: need extra data in property sheet
-			cfg->m_nWindowHeight = 720;	// TODO: need extra data in property sheet
+			cfg->m_nWindowWidth = 1024;	// TODO: need extra data in property sheet
+			cfg->m_nWindowHeight = 768;	// TODO: need extra data in property sheet
 		}
 		else
 			cfg->m_wndMode = CAppConfig::WindowMode::WndModeNull;
@@ -300,8 +300,8 @@ int CMainDlg::AppProperties()
 			if (pgAdvanced.m_bWindowMode)
 			{
 				cfg->m_wndMode = CAppConfig::WindowMode::WndModeWindowed;
-				cfg->m_nWindowWidth = 1280;	// TODO: need extra data in property sheet
-				cfg->m_nWindowHeight = 720;	// TODO: need extra data in property sheet
+				cfg->m_nWindowWidth = 1024;	// TODO: need extra data in property sheet
+				cfg->m_nWindowHeight = 768;	// TODO: need extra data in property sheet
 			}
 			else
 				cfg->m_wndMode = CAppConfig::WindowMode::WndModeNull;
@@ -318,7 +318,6 @@ int CMainDlg::AppProperties()
 			// find the config in AppData and update it
 
 			m_AppData.UpdateConfig(*cfg);
-
 
 		}
 
@@ -400,25 +399,27 @@ LRESULT CMainDlg::OnNMDblclkListApp(int /*idCtrl*/, LPNMHDR pNMHDR, BOOL& /*bHan
 
 		ATLASSERT(cfg);
 
-		if (cfg->m_wndMode == CAppConfig::WindowMode::WndModeWindowed)
-		{
-			//dxxhook
-			StartProcessWithDirect3D9Hook(*cfg);
+		//if (cfg->m_wndMode == CAppConfig::WindowMode::WndModeWindowed)
+		//{
+		//	//dxxhook
+		//	StartA3ProcessWithHook(*cfg);
 
-		}
+		//}
+
+		StartA3ProcessWithHook(*cfg);
 	}
 
 	return 0;
 }
 
 
-int CMainDlg::StartProcessWithDirect3D9HookA(CAppConfig& cfg)
+int CMainDlg::StartA3ProcessWithHookA(CAppConfig& cfg)
 {
 	return 0;
 }
 
 
-int CMainDlg::StartProcessWithDirect3D9HookW(CAppConfig& cfg)
+int CMainDlg::StartA3ProcessWithHookW(CAppConfig& cfg)
 {
 
 	STARTUPINFOW si;
@@ -476,6 +477,25 @@ int CMainDlg::StartProcessWithDirect3D9HookW(CAppConfig& cfg)
 	}
 	strAppDir = lpszPath;
 
+	// strArgument need to pass the extra command line
+	
+	if (cfg.m_wndMode == CAppConfig::WindowMode::WndModeWindowed)
+	{
+		CString str;
+
+		str.Format(_T(" -windowmode 1 -width %d -height %d"), cfg.m_nWindowWidth, cfg.m_nWindowHeight );
+		strArgument += str;
+
+	}
+
+	{
+		CString str;
+		str.Format(_T(" -host %s -port %d"), cfg.m_strHostName, cfg.m_wPort);
+		strArgument += str;
+	}
+
+
+
 	strAppFullPath += _T(" ");
 	strAppFullPath += strArgument;
 
@@ -501,12 +521,12 @@ int CMainDlg::StartProcessWithDirect3D9HookW(CAppConfig& cfg)
 	return 0;
 }
 
-int CMainDlg::StartProcessWithDirect3D9Hook(CAppConfig& cfg)
+int CMainDlg::StartA3ProcessWithHook(CAppConfig& cfg)
 {
 #ifdef  UNICODE                     // r_winnt
-	return StartProcessWithDirect3D9HookW(cfg);
+	return StartA3ProcessWithHookW(cfg);
 #else
-	return StartProcessWithDirect3D9HookA(cfg);
+	return StartA3ProcessWithHookA(cfg);
 #endif
 	return 0;
 }

@@ -1,6 +1,111 @@
 // dllmain.cpp : Defines the entry point for the DLL application.
 #include "pch.h"
 
+
+AppData gAppData;
+
+
+//
+// supported command line arguments
+//  -windowmode 1
+//
+
+BOOL InitAppData()
+{
+    BOOL r = FALSE;
+	LPSTR lpszCmdLine;
+	lpszCmdLine = GetCommandLineA();
+
+
+    ZeroMemory(&gAppData, sizeof(gAppData));
+
+	TRACEA("CommandLine: %s\n", lpszCmdLine);
+
+    CHAR* p;
+    
+    p = strstr(lpszCmdLine, "-windowmode");
+
+    if (p)
+    {
+        p += lstrlenA("-windowmode");
+
+        while (*p++ == 0);
+
+
+        gAppData.WindowMode = (1 == atoi(p)) ? TRUE: FALSE;
+    }
+
+    if (gAppData.WindowMode == TRUE)
+    {
+        p = strstr(lpszCmdLine, "-width");
+        if (p)
+        {
+            p += lstrlenA("-width");
+
+            while (*p++ == 0);
+
+
+            gAppData.WindowWidth = atoi(p);
+        }
+
+        p = strstr(lpszCmdLine, "-height");
+        if (p)
+        {
+            p += lstrlenA("-height");
+
+            while (*p++ == 0);
+
+
+            gAppData.WindowHeight = atoi(p);
+        }
+    }
+
+    p = strstr(lpszCmdLine, "-host");
+    if (p)
+    {
+        p += lstrlenA("-host");
+
+        while (*p++ == 0);
+
+        CHAR* q = gAppData.szHost;
+        int i = 0;
+        
+        while (*p != ' ')
+        {
+            *q++ = *p++;
+            i++;
+            if (i >= INET_ADDRSTRLEN)
+            {
+                TRACE("ERROR: host IP to long\n");
+                break;
+            }
+        }
+
+    }
+
+    p = strstr(lpszCmdLine, "-port");
+    if (p)
+    {
+        p += lstrlenA("-port");
+
+        while (*p++ == 0);
+
+
+        gAppData.iPort = atoi(p);
+
+    }
+
+
+    TRACE("WindowMode = %d\n", gAppData.WindowMode);
+    TRACE("WindowWidth = %d\n", gAppData.WindowWidth);
+    TRACE("WindowHeight = %d\n", gAppData.WindowHeight);
+    TRACEA("Host = %s:%d\n", gAppData.szHost, gAppData.iPort);
+
+    r = TRUE;
+
+    return r;
+}
+
 BOOL APIENTRY DllMain(HMODULE hModule,
     DWORD  ul_reason_for_call,
     LPVOID lpReserved
@@ -24,6 +129,14 @@ BOOL APIENTRY DllMain(HMODULE hModule,
 
         TRACE("Starting..\n");
 
+        if (!InitAppData())
+        {
+            MessageBox(NULL, TEXT("InitAppData failed!"), MODULENAME, MB_ICONHAND);
+            return FALSE;
+        }
+
+
+        // Parse command line
 
         DetourTransactionBegin();
         DetourUpdateThread(GetCurrentThread());

@@ -29,3 +29,20 @@ VOID PrintMessageA(LPCSTR pszFormat, ...);
 
 #define TRACEA(_message_, ...)\
 	PrintMessageA("a3hooks.dll!"_message_, __VA_ARGS__)
+
+
+// extra running arguments
+
+struct AppData
+{
+	BOOL WindowMode;
+	int WindowWidth;
+	int WindowHeight;
+
+	CHAR szHost[INET_ADDRSTRLEN];
+
+	int iPort;
+};
+
+extern AppData gAppData;
+

@@ -5,6 +5,13 @@ class CAppConfig
 {
 
 public:
+    CAppConfig()
+        : m_nWindowWidth(0)
+        , m_nWindowHeight(0)
+    {
+
+    }
+
 
     enum WindowMode
     {

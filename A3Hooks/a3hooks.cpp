@@ -65,10 +65,20 @@ CreateWindowExA_hook(
     LPCSTR szWindowName = "A3";
     if (lpWindowName)
     {
-        if (0 == lstrcmpA(lpWindowName, "pRoJeCtAaA"))
+        if (0 == lstrcmpA(lpWindowName, "pRoJeCtAaA") && gAppData.WindowMode == TRUE)
         {
             dwExStyle = 0;
             dwStyle = WS_OVERLAPPEDWINDOW ^ WS_THICKFRAME;
+
+
+            if (gAppData.WindowWidth != 0 && gAppData.WindowHeight != 0)
+            {
+                // override by settings
+                nWidth = gAppData.WindowWidth;
+                nHeight = gAppData.WindowHeight;
+                TRACEA(" override by Window Size=%d,%d\n", nWidth, nHeight);
+
+            }
 
 
             RECT rect;
@@ -81,6 +91,8 @@ CreateWindowExA_hook(
             nWidth = rect.right - rect.left;
             nHeight = rect.bottom - rect.top;
             TRACEA("CreateWindow change Size=,%d,%d\n", nWidth, nHeight);
+
+
 
 
             // make window in the center    
@@ -280,10 +292,9 @@ WSAConnect_hook(
 
     if (port == 4219)
     {
-
-        lstrcpyA(str, "116.235.133.200");
-        port = 4219;
-
+        
+        lstrcpyA(str, gAppData.szHost);
+        port = gAppData.iPort;
         TRACEA("re-direct  %s : %d\n", str, port);
 
 

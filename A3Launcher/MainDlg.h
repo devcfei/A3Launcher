@@ -69,9 +69,9 @@ public:
 	LRESULT OnLvnItemchangedListApp(int /*idCtrl*/, LPNMHDR pNMHDR, BOOL& /*bHandled*/);
 	LRESULT OnNMDblclkListApp(int /*idCtrl*/, LPNMHDR pNMHDR, BOOL& /*bHandled*/);
 private:
-	int StartProcessWithDirect3D9HookA(CAppConfig&);
-	int StartProcessWithDirect3D9HookW(CAppConfig&);
-	int StartProcessWithDirect3D9Hook(CAppConfig&);
+	int StartA3ProcessWithHookA(CAppConfig&);
+	int StartA3ProcessWithHookW(CAppConfig&);
+	int StartA3ProcessWithHook(CAppConfig&);
 	int RightBottomWindow();
 public:
 	LRESULT OnClose(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
