@@ -551,5 +551,7 @@ LRESULT CMainDlg::OnClose(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, B
 	// hide to system tray
 	ShowWindow(SW_HIDE);
 
-	return 0;
+
+	CloseDialog(1);
+	return TRUE;
 }
